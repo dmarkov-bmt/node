@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>ToDo</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+        integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<br><br>
+<div class="container">
+  <div class="row justify-content-center">
+    <h1> Ля, шоб поделать...</h1>
+  </div>
+  <br>
+
+  <div class="row justify-content-center">
+    <div class="col col-6">
+      <!--ВКЛДАКИ-->
+      <ul class="nav nav-tabs">
+        <li class="col-md-4" ><a id = "all" class="text-white bg-all" >ВСЕ</a>
+        </li>
+        <li class="col-md-4" ><a id = "active" class="text-white bg-active" >АКТИВНЫЕ</a>
+        </li>
+        <li class="col-md-4" ><a id = "completed" class="text-white bg-completed" >ЗАВЕРШЁННЫЕ</a>
+        </li>
+      </ul>
+
+      <!--СОДЕРЖИМОЕ ВКЛАДОК-->
+      <div class="tab-content text-white">
+
+        <div class="tab-pane active bg-all" id="todo-place">
+          <form class="form-inline">
+            <div class="col-md-1">
+              <span class="glyphicon glyphicon-pencil"></span>
+            </div>
+            <input type="text" class="col-md-10" id="input-txt" placeholder="Шоб сделать...">
+            <i class="col-md-1 glyphicon glyphicon-plus" id="btn-add"></i>
+          </form>
+          <br>
+          <ul id="add-place" style = "margin-left: 0;padding-left: 0;">
+            <script type="text/template" id="item-template">
+              <% for (let i = 0; i < item.length; i++) {%>
+              <li style = "list-style-type: none;">
+                <div class="row" style="margin-top: 15px">
+                  <div class="col-md-1 adding"><span data-id="<%=item[i].id%>"
+                                                     class="glyphicon <% if (item[i].isActive) {%> glyphicon-hourglass <%}
+                                                     else {%> glyphicon-ok <%}%>"></span>
+                  </div>
+                  <input type="text" class="col-md-10" data-id="<%=item[i].id%>" value="<%=item[i].value%>" disabled>
+                  <div class="col-md-1 removing"><span class="glyphicon glyphicon-remove"
+                                                       data-id="<%=item[i].id%>"></span></div>
+                </div>
+              </li>
+              <%}%>
+            </script>
+          </ul>
+          <br>
+        </div>
+
+      </div>
+
+      <!--ПОДВАЛ-->
+      <div class="row">
+
+        <div class="col-md-3">
+          Выполненных:<span id="compl">0</span> <br>
+          Активных:<span id="act">0</span>
+        </div>
+
+        <div class="col-md-4 text-center" style="font-size:16px">
+
+            Страница:
+            <span class="glyphicon glyphicon-menu-left"></span>
+            <span id="current-page">1</span> / <span id="last-page">1 </span>
+            <span class="glyphicon glyphicon-menu-right"></span>
+
+        </div>
+
+        <div class="col-md-3" id="compl-all-btn">
+          <button class="btn btn-success btn-style">Выполнить все</button>
+        </div>
+
+        <div class="col-md-2" id="delete-all-btn">
+          <button class="btn btn-danger btn-style">Удалить все</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- библиотека LoDash -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.3.0/lodash.js"></script>
+
+<!--Библиотека JQuery-->
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+
+
+<!-- bootstrap JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+<script src="js/myjsfile3.js"></script>
+</body>
+</html>

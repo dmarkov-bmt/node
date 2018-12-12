@@ -1,0 +1,100 @@
+@font-face {
+    font-family: ttnorms;
+    src: url(../fonts/TTNorms-Italic.otf);
+    font-style: italic;
+}
+
+@font-face {
+    font-family: ttnorms;
+    src: url(../fonts/TTNorms-Regular.otf);
+    font-style: normal;
+}
+
+body {
+    font-family: ttnorms;
+    font-size: 14px;
+}
+
+#all {
+    background-color: #00d2ff;
+}
+
+.nav-tabs li {
+    cursor: pointer;
+    padding: 0;
+
+}
+
+input[type="text"], input[type="text"]:focus, input[type="text"]::-webkit-input-placeholder {
+    color: #fff9e0;
+    border: 0;
+    outline: none;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+input[type="text"], input[type="text"]:focus {
+    border-bottom: 2px solid #fff9e0;
+}
+
+input[type="text"]::-webkit-input-placeholder {
+    color: rgba(255, 249, 224, 0.7);
+}
+
+.nav-tabs .col-md-4 a[href="#completed"] {
+    margin-right: 0;
+}
+
+div form {
+    padding-top: 15px;
+}
+
+.tab-content {
+    font-style: italic;
+}
+
+.form-inline div {
+    padding-right: 0;
+    text-align: right;
+}
+
+#btn-add {
+    cursor: pointer;
+}
+
+#delete-all-btn, #compl-all-btn {
+    padding: 2px;
+    text-align: right;
+}
+
+#delete-all-btn {
+    text-align: left;
+}
+
+.bg-all {
+    background-color: #00d2ff !important;
+}
+.bg-active{
+    background-color: #00d679 !important;
+}
+.bg-completed {
+    background-color: #ff6969 !important;
+}
+
+.adding {
+    padding-right: 0;
+    text-align: right;
+    font-size: 15px;
+}
+
+.removing{
+    padding-left: 0;
+    cursor: pointer;
+}
+
+.glyphicon-menu-left, .glyphicon-menu-right, .glyphicon-hourglass {
+    cursor: pointer;
+}
+
+.btn-style{
+    font-size: 14px;
+}
