@@ -15,7 +15,7 @@ let sequelize = new Sequelize('todoes', 'root', 'aq1sw2de3fr4', {
 
 let Todo = sequelize.define('todo', {
     value: Sequelize.STRING,
-    isActive: {type: Sequelize.BOOLEAN, allowNull: false, defaultValue: true }
+    isActive: {type: Sequelize.BOOLEAN}
 }, {
     freezeTableName: true
 });
@@ -47,6 +47,17 @@ let activeTabItems = function(activeTab, curPage, perPage) {
     }
 };
 
+let countTab = function(activeTab){
+    if (activeTab === 'all')
+        return Todo.count();
+    if (activeTab === 'active') {
+        return Todo.count({where :{isActive: true}})
+    }
+    if (activeTab === 'completed') {
+        return Todo.count({where :{isActive: false}})
+    }
+};
+
 let complCount = function () {
     return Todo.count({where: {isActive: false}})
 };
@@ -68,34 +79,49 @@ app.use((req, res, next) => {
 
 });
 
+app.put("/todo", (req, res) => {
+    Todo.update({isActive: false}, {where: {isActive:true}}).then(()=>res.send())
+});
+
 app.put("/todo/:id/makeCompl", (req, res) => {
     Todo.findById(req.params.id).then(item => {
-        item.update({isActive: false}).then(() => res.send())
+        item.update({isActive: false}).then(()=>res.send())
     })
 });
 
+app.put("/todo/:id/change", (req, res) => {
+    Todo.findById(req.params.id).then(item => {
+        item.update({value: req.body.value}).then(()=>res.send())
+    })
+});
+app.delete("/todo/all", (req, res) => {
+
+});
 
 app.delete("/todo/:id", (req, res) => {
     Todo.findById(req.params.id).then(item => {
-        item.destroy();
-        res.send()
-    })});
+        item.destroy().then(() => res.send())
+    })
+});
 
 app.get("/todo", (req, res)=>{
     let acTab = req.query.activeTab;
     let curPage = req.query.currentPage;
     let perPage = req.query.perPage;
-    Todo.count()
+    let lastPage = 0;
+    countTab(acTab)
         .then(count => {
+            if (count === 0) return 1;
             return Math.ceil(count/perPage)
         })
-        .then(lastPage => {
-            if (curPage > lastPage) curPage = lastPage;
-            //res.send(data);
+        .then(pages => {
+            if (curPage > pages) curPage = pages;
+            lastPage = +pages;
         })
         .then(() => activeTabItems(acTab, curPage, perPage).then(items => {
             data.portion = items;
             data.currentPage = curPage;
+            data.lastPage = lastPage;
             res.send(data);
             })
         )
@@ -103,7 +129,7 @@ app.get("/todo", (req, res)=>{
 
 app.post("/todo", function (req, res) {
     if (!req.body) return res.sendStatus(400);
-    Todo.create({value: req.body.value}).then(() => res.send());
+    Todo.create({value: req.body.value, isActive: true}).then(() => res.send());
 });
 
 app.listen(3000, (err) => {

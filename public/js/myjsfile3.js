@@ -13,7 +13,7 @@ class View {
         this.$addPlace.html(tmpl(data));
         this.$inputTxt.val('');
 
-        $('#compl').text(info.completedItemss);
+        $('#compl').text(info.completedItems);
         $('#act').text(info.activeItems);
         $('#current-page').text(info.currentPage);
         $('#last-page').text(info.lastPage);
@@ -39,19 +39,18 @@ class Model {
     }
 
     deleteAll(){
-
+        return $.ajax({
+            url: `${this.mainUrl}/all`,
+            type: "DELETE"
+        })
     }
 
     changeItem(id, value){
-
-    }
-
-    itemsOnPage() {
-
-    }
-
-    infoPage(activeTab){
-
+        return $.ajax({
+            url: `${this.mainUrl}/${id}/change`,
+            type: "PUT",
+            data: {value: value}
+        })
     }
 
     makeCompl(id) {
@@ -61,12 +60,11 @@ class Model {
         })
     }
 
-    makeComplAll () {
-
-    }
-
-    saveLocalStorage() {
-
+    makeComplAll() {
+        return $.ajax({
+            url: `${this.mainUrl}`,
+            type: "PUT"
+        })
     }
 }
 
@@ -119,43 +117,51 @@ class Controller {
         });
 
         $('#compl-all-btn').on('click', () => {
-
+            this.model.makeComplAll()
+                .then((err) => {
+                    if (err) alert(JSON.stringify(err));
+                    this.render();
+                });
         });
 
-        $('#todo-place').on('click','.glyphicon-remove', (event) => {
+        $('#todo-place').on('click', '.glyphicon-remove', (event) => {
             let id = $(event.currentTarget).attr('data-id');
+            this.model.removeItem(id)
+                .then((err) => {
+                    if (err) alert(JSON.stringify(err));
+                    this.render();
+                });
+        });
 
+        $('#delete-all-btn').on('click', () => {
+            this.model.deleteAll()
                 .then((err) => {
                     if (err) alert(err);
                     this.render();
                 });
         });
 
-        $('#delete-all-btn').on('click',() => {
-            this.model.deleteAll();
-        });
-
-        $('#todo-place').on('dblclick','input[disabled]', (event) => {
+        $('#todo-place').on('dblclick', 'input[disabled]', (event) => {
             $(event.currentTarget).removeAttr('disabled');
             $(event.currentTarget).focusout((event) => {
                 let val = $(event.currentTarget).val();
                 let id = $(event.currentTarget).attr('data-id');
-                this.model.changeItem(+id, val);
-                this.view.updateInfo(this.model.infoPage(this.model.activeTab));
-                this.view.render(this.itemsOnThePage(this.model.activeTab));
+                this.model.changeItem(+id, val)
+                    .then((err) => {
+                        if (err) alert(err);
+                        this.render();
+                    });
             });
         });
 
         $('.glyphicon-menu-left').on('click', () => {
-            if (this.model.currentPage > 1){this.model.setCurPage(this.model.currentPage - 1)}
-            this.view.updateInfo(this.model.infoPage(this.model.activeTab));
-            this.view.render(this.itemsOnThePage(this.model.activeTab));
+            if (this.state.currentPage > 1){this.state.currentPage--}
+            this.render();
         });
 
         $('.glyphicon-menu-right').on('click', () => {
-            if (this.model.currentPage < this.model.lastPage){this.model.setCurPage(this.model.currentPage + 1)}
-            this.view.updateInfo(this.model.infoPage(this.model.activeTab));
-            this.view.render(this.itemsOnThePage(this.model.activeTab));
+            if (this.state.currentPage < this.state.lastPage){this.state.currentPage++}
+            this.render();
         });
 
         $('.nav-tabs li a').on('click', (event) => {
@@ -169,6 +175,7 @@ class Controller {
         $.get(`${this.model.mainUrl}?activeTab=${this.state.activeTab}&currentPage=${this.state.currentPage}&perPage=${this.state.perPage}`)
             .then(data =>{
                 this.state.portion = data.portion;
+                this.state.lastPage = data.lastPage;
                 this.state.currentPage = data.currentPage;
                 this.state.activeItems = data.activeItems;
                 this.state.completedItems = data.completedItems;
