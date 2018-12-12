@@ -32,7 +32,10 @@ class Model {
     }
 
     removeItem(id) {
-
+        return $.ajax({
+            url: `${this.mainUrl}/${id}`,
+            type: "DELETE"
+        })
     }
 
     deleteAll(){
@@ -121,10 +124,7 @@ class Controller {
 
         $('#todo-place').on('click','.glyphicon-remove', (event) => {
             let id = $(event.currentTarget).attr('data-id');
-            $.ajax({
-                url: `${this.model.mainUrl}/${id}`,
-                type: "DELETE"
-            })
+
                 .then((err) => {
                     if (err) alert(err);
                     this.render();
