@@ -23,70 +23,63 @@ let Todo = sequelize.define('todo', {
 
 Todo.sync();
 
-productRouter.use('/', (req, res, next) => {
-  actCount()
-    .then(act => data.activeItems = act)
-    .then(() => {
-      complCount().then(compl => {
-        data.completedItems = compl;
-        next();
-      })
-    })
+productRouter.use('/', async (req, res, next) => {
+  data.activeItems = await actCount();
+  data.completedItems = await complCount();
+  next();
 });
 
-productRouter.put('/:id/makeCompl', (req, res) => {
-  Todo.findById(req.params.id).then(item => {
-    item.update({ isActive: false }).then(() => res.send())
-  })
+productRouter.put('/:id/makeCompl', async (req, res) => {
+  let item = await Todo.findById(req.params.id);
+  await item.update({isActive: false});
+  res.send()
 });
 
-productRouter.put('/:id/change', (req, res) => {
-  Todo.findById(req.params.id).then(item => {
-    item.update({ value: req.body.value }).then(() => res.send())
-  })
+productRouter.put('/:id/change',async (req, res) => {
+  let item = await Todo.findById(req.params.id);
+  await item.update({ value: req.body.value });
+  res.send();
 });
 
-productRouter.put('/', (req, res) => {
-  Todo.update({ isActive: false }, { where: { isActive: true } }).then(() => res.send())
+productRouter.put('/',async (req, res) => {
+  await Todo.update({ isActive: false }, { where: { isActive: true } });
+  res.send();
 });
 
-productRouter.delete('/:id', (req, res) => {
+productRouter.delete('/:id', async (req, res) => {
   Todo.findById(req.params.id).then(item => {
     item.destroy().then(() => res.send())
   })
 });
 
-productRouter.delete('/', (req, res) => {
-  Todo.destroy({ where: {}, truncate: true }).then(() => res.send())
+productRouter.delete('/', async (req, res) => {
+  await Todo.destroy({ where: {}, truncate: true });
+  res.send();
 });
 
-productRouter.get('/', (req, res) => {
+productRouter.get('/', async (req, res) => {
   let acTab = req.query.activeTab;
   let curPage = req.query.currentPage;
   let perPage = req.query.perPage;
-  let lastPage = 1;
 
-  countTab(acTab)
-    .then(count => {
-      if (count === 0) lastPage = 1;
-      else {
-        let pages = Math.ceil(count / perPage);
-        if (curPage > pages) curPage = pages;
-        lastPage = +pages
-      }
-    })
-    .then(() => activeTabItems(acTab, curPage, perPage)
-      .then(items => {
-        data.portion = items;
-        data.currentPage = curPage;
-        res.send(data);
-      })
-    )
+  let count = await countTab(acTab);
+  if (count === 0) {
+    data.lastPage = 1;
+  }
+  else {
+    let pages = Math.ceil(count / perPage);
+    if (curPage > pages) curPage = pages;
+    data.lastPage = +pages
+  }
+  data.portion = await activeTabItems(acTab, curPage, perPage);
+  data.currentPage = curPage;
+  res.send(data);
 });
 
-productRouter.post('/', function(req, res) {
+productRouter.post('/',async (req, res) => {
   if (!req.body) return res.sendStatus(400);
-  Todo.create({ value: req.body.value, isActive: true }).then(() => res.send());
+  await Todo.create({ value: req.body.value, isActive: true });
+  res.send();
 });
 
 function activeTabItems(activeTab, curPage, perPage) {
@@ -110,7 +103,7 @@ function activeTabItems(activeTab, curPage, perPage) {
   }
 }
 
-let countTab = function(activeTab) {
+function countTab(activeTab) {
   if (activeTab === 'active') {
     return actCount()
   }
@@ -118,14 +111,14 @@ let countTab = function(activeTab) {
     return complCount()
   }
   return Todo.count();
-};
+}
 
 function complCount() {
   return Todo.count({ where: { isActive: false } })
 }
 
 function actCount() {
-  return Todo.count({ where: { isActive: true } })
+  return Todo.count({where: { isActive: true }})
 }
 
 module.exports = productRouter;

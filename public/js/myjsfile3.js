@@ -8,8 +8,8 @@ class View {
   }
 
   render(info) {
-    let tmpl = _.template(this.$templ.html());
-    let data = { item: info.portion };
+    const tmpl = _.template(this.$templ.html());
+    const data = { item: info.portion };
     this.$addPlace.html(tmpl(data));
     this.$inputTxt.val('');
 
@@ -89,64 +89,43 @@ class Controller {
   }
 
   events() {
-    this.view.$btnAdd.click(() => {
-      this.model.addItem(this.view.$inputTxt.val())
-        .then((err) => {
-          if (err) alert(err);
-          this.render();
-        });
+    this.view.$btnAdd.click(async () => {
+      await this.model.addItem(this.view.$inputTxt.val());
+      this.render();
     });
-    this.view.$inputTxt.keydown((event) => {
-      if (event.which == 13) {
+    this.view.$inputTxt.keydown(async (event) => {
+      if (event.which === 13) {
         event.preventDefault();
-        this.model.addItem(this.view.$inputTxt.val())
-          .then((err) => {
-            if (err) alert(err);
-            this.render();
-          });
+        await this.model.addItem(this.view.$inputTxt.val());
+        this.render();
       }
     });
 
-    $('#todo-place').on('click', '.glyphicon-hourglass', (event) => {
+    $('#todo-place').on('click', '.glyphicon-hourglass', async (event) => {
       let id = $(event.currentTarget).attr('data-id');
-      this.model.makeCompl(id)
-        .then((err) => {
-          if (err) alert(err);
-          this.render();
-        });
+      await this.model.makeCompl(id);
+      this.render();
     });
-    $('#compl-all-btn').on('click', () => {
-      this.model.makeComplAll()
-        .then((err) => {
-          if (err) alert(JSON.stringify(err));
-          this.render();
-        });
+    $('#compl-all-btn').on('click', async () => {
+      await this.model.makeComplAll();
+      this.render();
     });
-    $('#todo-place').on('click', '.glyphicon-remove', (event) => {
+    $('#todo-place').on('click', '.glyphicon-remove', async (event) => {
       let id = $(event.currentTarget).attr('data-id');
-      this.model.removeItem(id)
-        .then((err) => {
-          if (err) alert(JSON.stringify(err));
-          this.render();
-        });
+      await this.model.removeItem(id);
+      this.render();
     });
-    $('#delete-all-btn').on('click', () => {
-      this.model.deleteAll()
-        .then((err) => {
-          if (err) alert(err);
-          this.render();
-        });
+    $('#delete-all-btn').on('click', async () => {
+      await this.model.deleteAll();
+      this.render();
     });
     $('#todo-place').on('dblclick', 'input[disabled]', (event) => {
       $(event.currentTarget).removeAttr('disabled');
-      $(event.currentTarget).focusout((event) => {
+      $(event.currentTarget).focusout(async (event) => {
         let val = $(event.currentTarget).val();
         let id = $(event.currentTarget).attr('data-id');
-        this.model.changeItem(+id, val)
-          .then((err) => {
-            if (err) alert(err);
-            this.render();
-          });
+        await this.model.changeItem(+id, val);
+        this.render();
       });
     });
     $('.glyphicon-menu-left').on('click', () => {
@@ -167,19 +146,15 @@ class Controller {
     })
   }
 
-  render() {
-    $.get(`${this.model.mainUrl}?activeTab=${this.state.activeTab}&currentPage=${this.state.currentPage}&perPage=${this.state.perPage}`)
-      .then(data => {
-        this.state.portion = data.portion;
-        this.state.lastPage = data.lastPage;
-        this.state.currentPage = data.currentPage;
-        this.state.activeItems = data.activeItems;
-        this.state.completedItems = data.completedItems;
-        return this.state;
-      })
-      .then(data => {
-        this.view.render(data);
-      });
+  async render() {
+    let data = await $.get(`${this.model.mainUrl}?activeTab=${this.state.activeTab}&currentPage=${this.state.currentPage}&perPage=${this.state.perPage}`);
+    this.state.portion = data.portion;
+    this.state.lastPage = data.lastPage;
+    this.state.currentPage = data.currentPage;
+    this.state.activeItems = data.activeItems;
+    this.state.completedItems = data.completedItems;
+
+    this.view.render(this.state);
   }
 }
 
