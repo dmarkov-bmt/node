@@ -47,9 +47,10 @@ productRouter.put('/',async (req, res) => {
 });
 
 productRouter.delete('/:id', async (req, res) => {
-  Todo.findById(req.params.id).then(item => {
-    item.destroy().then(() => res.send())
-  })
+  const id = req.params.id;
+  let item = await Todo.findById(id);
+  await item.destroy();
+  res.send()
 });
 
 productRouter.delete('/', async (req, res) => {
