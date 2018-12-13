@@ -32,7 +32,7 @@ let activeTabItems = function(activeTab, curPage, perPage) {
         limit: +perPage,
         offset: perPage * (curPage - 1),
         attributes: ['id', 'isActive', 'value'],
-        order: [['updatedAt', 'DESC']]
+        order: [['createdAt', 'DESC']]
     };
 
     if (activeTab === 'all')
@@ -94,8 +94,8 @@ app.put("/todo/:id/change", (req, res) => {
         item.update({value: req.body.value}).then(()=>res.send())
     })
 });
-app.delete("/todo/all", (req, res) => {
-
+app.delete("/todo", (req, res) => {
+    Todo.destroy({where: {}, truncate: true}).then(()=>res.send())
 });
 
 app.delete("/todo/:id", (req, res) => {

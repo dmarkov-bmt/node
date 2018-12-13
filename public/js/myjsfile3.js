@@ -40,7 +40,7 @@ class Model {
 
     deleteAll(){
         return $.ajax({
-            url: `${this.mainUrl}/all`,
+            url: `${this.mainUrl}`,
             type: "DELETE"
         })
     }
