@@ -1,4 +1,3 @@
-
 class View {
     constructor(){
         this.$addPlace = $('#add-place');
@@ -19,32 +18,27 @@ class View {
         $('#last-page').text(info.lastPage);
     }
 }
-
 class Model {
     constructor(){
         this.mainUrl = '/todo';
     }
-
     addItem(value) {
         if (value.trim()) {
             return $.post(this.mainUrl, {value: value})
         }
     }
-
     removeItem(id) {
         return $.ajax({
             url: `${this.mainUrl}/${id}`,
             type: "DELETE"
         })
     }
-
     deleteAll(){
         return $.ajax({
             url: `${this.mainUrl}`,
             type: "DELETE"
         })
     }
-
     changeItem(id, value){
         return $.ajax({
             url: `${this.mainUrl}/${id}/change`,
@@ -52,14 +46,12 @@ class Model {
             data: {value: value}
         })
     }
-
     makeCompl(id) {
         return $.ajax({
             url: `${this.mainUrl}/${id}/makeCompl`,
             type: "PUT"
         })
     }
-
     makeComplAll() {
         return $.ajax({
             url: `${this.mainUrl}`,
@@ -83,10 +75,9 @@ class Controller {
         };
     }
     init() {
-
+        this.render();
         this.events();
     }
-
     events(){
         this.view.$btnAdd.click(() => {
             this.model.addItem(this.view.$inputTxt.val())
@@ -95,7 +86,6 @@ class Controller {
                     this.render();
                 });
         });
-
         this.view.$inputTxt.keydown((event) => {
             if (event.which == 13) {
                 event.preventDefault();
@@ -115,7 +105,6 @@ class Controller {
                     this.render();
                 });
         });
-
         $('#compl-all-btn').on('click', () => {
             this.model.makeComplAll()
                 .then((err) => {
@@ -123,7 +112,6 @@ class Controller {
                     this.render();
                 });
         });
-
         $('#todo-place').on('click', '.glyphicon-remove', (event) => {
             let id = $(event.currentTarget).attr('data-id');
             this.model.removeItem(id)
@@ -132,7 +120,6 @@ class Controller {
                     this.render();
                 });
         });
-
         $('#delete-all-btn').on('click', () => {
             this.model.deleteAll()
                 .then((err) => {
@@ -140,7 +127,6 @@ class Controller {
                     this.render();
                 });
         });
-
         $('#todo-place').on('dblclick', 'input[disabled]', (event) => {
             $(event.currentTarget).removeAttr('disabled');
             $(event.currentTarget).focusout((event) => {
@@ -153,7 +139,6 @@ class Controller {
                     });
             });
         });
-
         $('.glyphicon-menu-left').on('click', () => {
             if (this.state.currentPage > 1){this.state.currentPage--}
             this.render();

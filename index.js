@@ -20,7 +20,7 @@ let Todo = sequelize.define('todo', {
     freezeTableName: true
 });
 
-Todo.sync({force: true});
+Todo.sync();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
